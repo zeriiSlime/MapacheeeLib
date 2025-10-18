@@ -1,0 +1,57 @@
+plugins {
+    id("java")
+    id("com.gradleup.shadow") version "9.2.2"
+    id("io.papermc.paperweight.userdev") version "2.0.0-beta.19"
+    `maven-publish`
+}
+
+group = "com.thewinterframework"
+version = "1.0.0"
+
+base {
+    archivesName = "wintercore"
+}
+
+repositories {
+    mavenCentral()
+    gradlePluginPortal()
+    maven("https://repo.papermc.io/repository/maven-public/")
+    maven("https://jitpack.io")
+}
+
+dependencies {
+    paperweight.paperDevBundle("1.21.8-R0.1-SNAPSHOT")
+
+    compileOnly("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
+
+    implementation("com.thewinterframework:paper:1.0.4")
+    annotationProcessor("com.thewinterframework:paper:1.0.4")
+
+    implementation("com.thewinterframework:configuration:1.0.2")
+    annotationProcessor("com.thewinterframework:configuration:1.0.2")
+
+    implementation("com.thewinterframework:command:1.0.1")
+    annotationProcessor("com.thewinterframework:command:1.0.1")
+
+    implementation("org.spongepowered:configurate-core:4.2.0")
+    implementation("org.spongepowered:configurate-yaml:4.2.0")
+}
+
+tasks.shadowJar {
+    archiveClassifier.set("")
+}
+
+tasks.processResources {
+    filesMatching("paper-plugin.yml") {
+        expand("version" to project.version)
+    }
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            from(components["shadow"])
+            artifactId = "wintercore"
+        }
+    }
+}
