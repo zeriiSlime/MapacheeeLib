@@ -1,0 +1,6 @@
+name: WinterCore
+version: 1.0.0
+main: com.thewinterframework.core.WinterCorePlugin
+api-version: "1.21"
+description: WinterCore plugin
+authors: ["WinterCore"]

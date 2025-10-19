@@ -1,7 +1,6 @@
 plugins {
     id("java")
     id("com.gradleup.shadow") version "9.2.2"
-    id("io.papermc.paperweight.userdev") version "2.0.0-beta.19"
     `maven-publish`
 }
 
@@ -20,8 +19,6 @@ repositories {
 }
 
 dependencies {
-    paperweight.paperDevBundle("1.21.8-R0.1-SNAPSHOT")
-
     compileOnly("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
 
     implementation("com.thewinterframework:paper:1.0.4")
@@ -41,17 +38,22 @@ tasks.shadowJar {
     archiveClassifier.set("")
 }
 
-tasks.processResources {
-    filesMatching("paper-plugin.yml") {
-        expand("version" to project.version)
-    }
-}
-
 publishing {
     publications {
         create<MavenPublication>("maven") {
-            from(components["shadow"])
+
             artifactId = "wintercore"
+
+            artifact(tasks.shadowJar) {}
         }
     }
+}
+
+tasks.jar { enabled = false }
+
+tasks.named("generateMetadataFileForMavenPublication") {
+    dependsOn(tasks.shadowJar)
+}
+tasks.named("publishMavenPublicationToMavenLocal") {
+    dependsOn(tasks.shadowJar)
 }
