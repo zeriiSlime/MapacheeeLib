@@ -29,12 +29,12 @@ repositories {
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
 
-    api("com.thewinterframework:paper:1.0.6")
-    annotationProcessor("com.thewinterframework:paper:1.0.6")
-    api("com.thewinterframework:configuration:1.0.4")
-    annotationProcessor("com.thewinterframework:configuration:1.0.4")
-    api("com.thewinterframework:command:1.0.1")
-    annotationProcessor("com.thewinterframework:command:1.0.1")
+    api("com.thewinterframework:paper:2.1.0")
+    annotationProcessor("com.thewinterframework:paper:2.1.0")
+    api("com.thewinterframework:configuration:2.0.0")
+    annotationProcessor("com.thewinterframework:configuration:2.0.0")
+    api("com.thewinterframework:command:2.0.0")
+    annotationProcessor("com.thewinterframework:command:2.0.0")
 
     implementation("org.spongepowered:configurate-core:4.2.0")
     implementation("org.spongepowered:configurate-yaml:4.2.0")
@@ -50,6 +50,24 @@ publishing {
             from(components["java"])
         }
     }
+}
+
+// Make resources available on the compile classpath so Winter's annotation processor
+// can find META-INF/winter/exposed-classes.txt during annotation processing
+val generatedResourcesDir = layout.buildDirectory.dir("generated/classpath/winter").get().asFile
+
+tasks.register("generateWinterExposedClasses") {
+    doLast {
+        val metaInfDir = File(generatedResourcesDir, "META-INF/winter")
+        metaInfDir.mkdirs()
+        val file = File(metaInfDir, "exposed-classes.txt")
+        file.createNewFile()
+    }
+}
+
+tasks.compileJava {
+    dependsOn("generateWinterExposedClasses")
+    classpath = classpath + files(generatedResourcesDir)
 }
 
 tasks.shadowJar {
