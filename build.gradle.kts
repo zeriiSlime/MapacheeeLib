@@ -66,6 +66,7 @@ tasks.register("generateWinterExposedClasses") {
 }
 
 tasks.compileJava {
+    options.release.set(21)
     dependsOn("generateWinterExposedClasses")
     classpath = classpath + files(generatedResourcesDir)
 }
